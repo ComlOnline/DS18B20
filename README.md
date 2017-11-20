@@ -19,3 +19,5 @@ Page output should look similar to this:
 {"28-0517027014ff":19625}
 {"28-0214640d18ff":19687}
 ```
+Note: The number is degrees C x10^3 so just divide by 1000  
+I've dont it like this as it will be fed to InfluxDB
