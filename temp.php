@@ -5,21 +5,22 @@ if ($handle) {
            $sensor = "/sys/bus/w1/devices/".trim($sensors)."/w1_slave";
            $sensorhandle = fopen($sensor, "r");
              if ($sensorhandle) {
-                 $thermometerReading = fread($sensorhandle, filesize($sensor));
-                 fclose($sensorhandle);
-                 // We want the value after the t= on the 2nd line
-                 preg_match("/t=(.+)/", preg_split("/\n/", $thermometerReading)[1], $matches);
-                 $celsius = round($matches[1] / 1000); //round the results
-                 $fahrenheit = round($celsius*9/5+32);
-                 print "Sensor ID#: $sensors = $celsius &deg;C / $fahrenheit &deg;F<br>";
-                 $sensors++;
+                $thermometerReading = fread($sensorhandle, filesize($sensor));
+                fclose($sensorhandle);
+                // We want the value after the t= on the 2nd line
+                preg_match("/t=(.+)/", preg_split("/\n/", $thermometerReading)[1], $matches);
+                $sensors = str_replace(PHP_EOL, '', $sensors);
+                $jsonstring->$sensors = $matches[1];
+                $json = json_encode($jsonstring, JSON_NUMERIC_CHECK );
+                echo $json;
+                $sensors++;
              } else {
-                print "No motherfucking temperature read!";
+                print "{\"ERROR\":\"NOTEMP\"}";
              }
     }
 
     fclose($handle);
 } else {
-    print "No motherfucking sensors found!";
+        print "{\"ERROR\":\"NOTFOUND\"}";
 }
 ?>
